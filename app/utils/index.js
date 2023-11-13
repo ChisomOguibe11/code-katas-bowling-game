@@ -3,3 +3,5 @@ export const STATUS = {
     IN_PROGRESS: 'IN_PROGRESS',
     COMPLETE: 'COMPLETE',
 };
+
+export const THROWS = ['First', 'Second', 'Third']

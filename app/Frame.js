@@ -1,4 +1,5 @@
 import {Pin} from "./Pin.js";
+import {THROWS} from "./utils/index.js";
 
 export class Frame {
     constructor(frameNumber=1) {
@@ -13,20 +14,27 @@ export class Frame {
     }
 
     toString() {
-        const frame =  `--------------------------------
-        Frame Number: #${this.frameNumber}
-        Rolls Taken: ${Math.max(this.scores.length, 1)}
-        Pins Remaining: ${this.pins.length}
-        Score: ${this.scores.reduce((prev, curr) => prev + curr, 0)}
-        Strike: ${this.strike ? 'YES' : 'NO'}
-        Spare: ${this.spare ? 'YES' : 'NO'}
-        --------------------------------`;
-        console.log(frame);
+        const frame =  `==========================
+Frame No: #${this.frameNumber}
+Pins Remaining: ${this.pins.length}
+Score: ${this.scores.reduce((prev, curr) => prev + curr, 0)}
+Strike: ${this.strike ? 'YES' : 'NO'}
+Spare: ${this.spare ? 'YES' : 'NO'}
+Rolls Available: ${this.rollsAvailable}
+==========================\n`;
+        console.table([{
+            pinsLeft: this.pins.length,
+            score: this.scores.reduce((prev, curr) => prev + curr, 0),
+            strike: this.strike ? 'YES' : 'NO',
+            spare: this.spare ? 'YES' : 'NO',
+            rollsAvailable: this.rollsAvailable
+        }]);
         return frame;
     }
 
     roll(pins) {
-        console.log("Knocked Pins: " + pins)
+        console.log(THROWS[this.scores.length] + ' Throw');
+        console.log("You knocked " + pins + " pins!")
         this.pins.splice(0, pins)
         this.scores.push(pins)
         this.rollsAvailable = this.rollsAvailable - 1
