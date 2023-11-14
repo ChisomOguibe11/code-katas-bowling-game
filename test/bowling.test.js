@@ -25,12 +25,13 @@ describe('Round setup', () => {
 
     test('Calling the nextFrame method increments the current frame by 1', () => {
         const r = new Round()
+        let frame = null
+        frame = r.nextFrame()
+        expect(r.frameIndex).toBe(1)
         r.nextFrame()
-        expect(r.currentFrameIndex).toBe(1)
+        expect(r.frameIndex).toBe(2)
         r.nextFrame()
-        expect(r.currentFrameIndex).toBe(2)
-        r.nextFrame()
-        expect(r.currentFrameIndex).toBe(3)
+        expect(r.frameIndex).toBe(3)
     })
 
     test('Calling the nextFrame method on the last frame of the round should not increment', () => {
@@ -46,9 +47,9 @@ describe('Round setup', () => {
         r.nextFrame()
         /** Last Frame **/
         r.nextFrame()
-        expect(r.currentFrameIndex).toBe(9)
+        expect(r.frameIndex).toBe(9)
         r.nextFrame()
-        expect(r.currentFrameIndex).toBe(9)
+        expect(r.frameIndex).toBe(9)
     })
 
     test('A new Round has 10 frames', () => {
