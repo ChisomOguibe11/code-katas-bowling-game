@@ -23,8 +23,9 @@ Spare: ${this.spare ? 'YES' : 'NO'}
 Rolls Available: ${this.rollsAvailable}
 ==========================\n`;
         console.table([{
-            pinsLeft: this.pins.length,
-            score: this.scores.reduce((prev, curr) => prev + curr, 0),
+            frame: this.frameNumber,
+            throw: this.scores.length,
+            score: this.getFrameScore(),
             strike: this.strike ? 'YES' : 'NO',
             spare: this.spare ? 'YES' : 'NO',
             rollsAvailable: this.rollsAvailable
@@ -33,8 +34,8 @@ Rolls Available: ${this.rollsAvailable}
     }
 
     roll(pins) {
-        console.log(THROWS[this.scores.length] + ' Throw');
-        console.log("You knocked " + pins + " pins!")
+        // console.log(THROWS[this.scores.length] + ' Throw');
+        // console.log("You knocked " + pins + " pins!")
         this.pins.splice(0, pins)
         this.scores.push(pins)
         this.rollsAvailable = this.rollsAvailable - 1
@@ -64,10 +65,20 @@ Rolls Available: ${this.rollsAvailable}
 
     setStrike() {
         this.strike = true
-        console.log("YOU GOT A STRIKE!!!")
+        console.log("YOU GOT A STRIKE!!!");
+        // If it is the last frame and the first throw
         if (this.isLast && this.scores.length === 1){
-            this.rollsAvailable = this.rollsAvailable + 1
+            this.rollsAvailable += 1
             this.resetPins()
         }
+        // If it is the first throw in any other frame
+        else if (this.scores.length === 1) {
+            this.rollsAvailable -= 1
+            this.resetPins()
+        }
+    }
+
+    getFrameScore() {
+        return this.scores.reduce((prev, curr) => prev + curr, 0)
     }
 }

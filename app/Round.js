@@ -10,12 +10,35 @@ export class Round {
             .fill(undefined)
             .map((val, index) => new Frame(index+1))
         this.frameIndex = 0;
-        this.score = 0;
         this.status = STATUS.NOT_STARTED
+        this.score = 0;
     }
 
-    addToScore(score){
-        this.score += score;
+    calculateTotalScore() {
+        let totalScore = this.frames[0].getFrameScore()
+        this.frames.reduce((prev, curr, index) => {
+            let bonus = 0;
+            const frameScore = curr.getFrameScore()
+            // check if penultimate frame was a strike
+            if (prev.strike && curr.isLast) {
+                bonus += curr.scores[0]
+                bonus += curr.scores[1]
+            }
+            // checks if non-penultimate frame was a strike
+            else if (prev.strike) {
+                if (curr.strike) {
+                    let nextFrame = this.nextFrame(index)
+                    bonus += nextFrame.scores[0] ?? 0
+                }
+                bonus += frameScore
+            }
+            // check if prev frame is a spare
+            else if (prev.spare) bonus += curr.scores[0] ?? 0
+            totalScore = totalScore + frameScore + bonus
+            // console.table({frameNumber: curr.frameNumber, frameScore: frameScore + bonus, bonus, totalScore})
+            return curr
+        })
+        this.score = totalScore
     }
 
     printRound(){
@@ -26,15 +49,15 @@ export class Round {
         this.frames = Array(10).fill(new Frame())
     }
 
-    nextFrame() {
-        console.log("Current Frame Index: " + this.frameIndex)
-        let frame = this.frames[this.frameIndex]
-        if (frame.isLast) {
+    nextFrame(index=this.frameIndex) {
+        console.log("Current Frame Index: " + index)
+        let currFrame = this.frames[index]
+        if (currFrame.isLast) {
             this.status = STATUS.COMPLETE
+            return currFrame
         } else {
-            this.frameIndex = this.frameIndex + 1
-            frame = this.frames[this.frameIndex]
+            this.frameIndex = index + 1
+            return this.frames[this.frameIndex]
         }
-        return frame
     }
 }

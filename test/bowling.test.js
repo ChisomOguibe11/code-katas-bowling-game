@@ -150,7 +150,7 @@ describe('Game logic', () => {
         expect(f.rollsAvailable).toBe(1)
     })
 
-    test('Getting a strike and a spare on the last frame of a round', () => {
+    test('Can get a strike and a spare on the last frame of a round', () => {
         const f = new Frame(10)
         f.roll(10)
         f.toString()
@@ -159,6 +159,115 @@ describe('Game logic', () => {
         f.roll(7)
         expect(f.strike).toBe(true)
         expect(f.spare).toBe(true)
-        expect(f.scores.reduce((prev, acc) => prev + acc)).toBe(20)
+        expect(f.getFrameScore()).toBe(20)
+    })
+
+    test('Can get up to 3 strikes on the last frame of a round', () => {
+        const f = new Frame(10)
+        f.roll(10)
+        f.toString()
+        f.roll(10)
+        f.toString()
+        f.roll(10)
+        expect(f.strike).toBe(true)
+        expect(f.scores.length).toBe(3)
+        expect(f.getFrameScore()).toBe(30)
+    })
+})
+
+describe('Scoring logic', () => {
+
+    test('Rolling 1 pin each throw of a round should result in score of 20', () => {
+        const r = new Round()
+        for (const f of r.frames){
+            console.log(f.frameNumber)
+            do {
+                f.roll(1)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(2 * 10)
+    })
+
+    test('After getting spare in a frame, the number of pins knocked in the next THROW should be included', () => {
+        const r = new Round()
+        let slice = r.frames.slice(0, 2)
+        for (const f of slice){
+            do {
+                if (f.frameNumber === 1) f.roll(5)
+                else f.roll(4)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(22)
+        /* -------------------------------- */
+        slice = r.frames.slice(2, 4)
+        for (const f of slice){
+            do {
+                if (f.frameNumber === 3) f.roll(5)
+                else f.roll(10)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(22 + 30)
+    })
+
+    test('Rolling a spare in each throw of a round should result in a score of 150', () => {
+        const r = new Round()
+        for (const f of r.frames){
+            do {
+                f.roll(5)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(150)
+    })
+
+    test('After getting a strike in a round, number of pins knocked in next 2 THROWS should be included', () => {
+        const r = new Round()
+        let slice = r.frames.slice(0, 2)
+        for (const f of slice){
+            do {
+                if (f.frameNumber === 1) f.roll(10)
+                else f.roll(4)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(26)
+        /* -------------------------------- */
+        slice = r.frames.slice(2, 5)
+        for (const f of slice){
+            do {
+                if (f.frameNumber === 3) f.roll(10) /* STRIKE */
+                else if (f.frameNumber === 4) f.roll(5) /* SPARE */
+                else f.roll(2)
+                f.toString()
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(26 + 36)
+    })
+
+    test('Rolling a strike in each frame, and getting 0 in the last frame should result in a score of 240', () => {
+        const r = new Round()
+        for (const f of r.frames){
+            do {
+                if(f.isLast) f.roll(0)
+                else f.roll(10)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(240)
+    })
+
+    test('Rolling a strike in each throw of a round should result in a score of 300', () => {
+        const r = new Round()
+        for (const f of r.frames){
+            do {
+                f.roll(10)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(300)
     })
 })

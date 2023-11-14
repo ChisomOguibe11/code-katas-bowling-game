@@ -24,10 +24,9 @@ export class Game {
                     frame.roll(knockedPins)
                     frame.toString()
                 } while (frame.rollsAvailable)
-                round.addToScore(frame.scores.reduce((prev, curr) => prev + curr, 0))
+                round.calculateTotalScore()
                 console.log("TOTAL SCORE: " + round.score)
             }
-
             console.log("================================================")
             console.log("\t\tROUND OVER\n");
             this.totalScore += round.score;
