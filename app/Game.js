@@ -1,8 +1,8 @@
 import {Round} from "./Round.js";
 
 export class Game {
-    constructor() {
-        this.numRounds = 3
+    constructor(numRounds=3) {
+        this.numRounds = numRounds
         this.rounds = Array(this.numRounds)
             .fill(0)
             .map((val, index) => new Round(index + 1))

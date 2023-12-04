@@ -260,6 +260,18 @@ describe('Scoring logic', () => {
         expect(r.score).toBe(240)
     })
 
+    test('Rolling a strike in each frame, and getting a strike and a spare in the last frame should result in a score of 285', () => {
+        const r = new Round()
+        for (const f of r.frames){
+            do {
+                if(f.isLast && f.scores.length >= 1) f.roll(5)
+                else f.roll(10)
+            } while (f.rollsAvailable)
+        }
+        r.calculateTotalScore()
+        expect(r.score).toBe(285)
+    })
+
     test('Rolling a strike in each throw of a round should result in a score of 300', () => {
         const r = new Round()
         for (const f of r.frames){

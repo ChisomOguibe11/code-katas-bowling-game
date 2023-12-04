@@ -57,7 +57,8 @@ Rolls Available: ${this.rollsAvailable}
     setSpare() {
         this.spare = true
         console.log("YOU GOT A SPARE!!!")
-        if (this.isLast) {
+        // If it is the last frame and NOT the third throw of the frame
+        if (this.isLast && this.scores.length <= 2) {
             this.rollsAvailable = this.rollsAvailable + 1
             this.resetPins()
         }
